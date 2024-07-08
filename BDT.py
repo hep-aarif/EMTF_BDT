@@ -4,7 +4,7 @@ import ROOT
 
 import gc
 
-import uproot
+#import uproot
 from subprocess import Popen, PIPE
 import numpy as np
 import os
@@ -18,6 +18,7 @@ import psutil
 from multiprocessing import Pool
 import argparse
 from to_TVMA import convert_model
+import datetime
 
 from math import log
 from math import exp
@@ -37,8 +38,10 @@ MODE = int(args.mode)
 GEM = (int(args.gem) == 1)
 USE_SLOPE = (int(args.slope) == 1)
 
+now=datetime.datetime.now()
+date_time=now.strftime("%Y%m%d_%H%M")
 
-label = "TESTING_NEW_AL9"
+label = date_time
 
 if(GEM):
     label += "_GEM"
@@ -125,11 +128,13 @@ for event in range(evt_tree.GetEntries()):
 
     if event_break: break
     #if event == MAX_EVT: break
-    if(nNegEndcap + nPosEndcap >= MAX_EVT):
+    if event == MAX_EVT and nNegEndcap != 0 and nPosEndcap != 0: 
         break
 
     if event % PRNT_EVT == 0:
-         print('BDT.py: Processing Event ' + str(event) + " | " + str(nNegEndcap) + ", " + str(nPosEndcap))
+        print('BDT.py: Processing Event #%d' % (event))
+        print('Pos-Endcap',nPosEndcap)
+        print('Neg-Endcap',nNegEndcap)    
     evt_tree.GetEntry(event)
 
 
